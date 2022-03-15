@@ -1,0 +1,31 @@
+from bs4 import BeautifulSoup
+import requests, lxml
+
+params = {
+    "q": "caracas arepa bar google",
+    "gl": "us"
+}
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.87 Safari/537.36"
+}
+
+html = requests.get("https://www.google.com/search", params=params, headers=headers, timeout=30)
+soup = BeautifulSoup(html.text, "lxml")
+
+# if right side knowledge graph is present -> parse the data.
+if soup.select_one(".liYKde"):
+    place_name = soup.select_one(".PZPZlf.q8U8x span").text
+    place_type = soup.select_one(".YhemCb+ .YhemCb").text
+    place_reviews = soup.select_one(".hqzQac span").text
+    place_rating = soup.select_one(".Aq14fc").text
+
+    print(place_name, place_type, place_reviews, place_rating, sep="\n")
+
+# output:
+'''
+Caracas Arepa Bar
+Venezuelan restaurant
+1,123 Google reviews
+4.5
+'''
